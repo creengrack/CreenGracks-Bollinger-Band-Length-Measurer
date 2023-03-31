@@ -1,0 +1,23 @@
+//@version=5
+indicator("Bollinger Band Length Measurer", overlay=false)
+
+// Bollinger Band Inputs
+length = input.int(55, "Length")
+mult = input.float(1.618, "Multiplier")
+
+// Calculate Bollinger Bands
+basis = ta.vwap(close, length)
+dev = mult * ta.stdev(close, length)
+upper = basis + dev
+lower = basis - dev
+
+// Calculate Length of Bollinger Bands
+bandLength = upper - lower
+
+// Calculate Percentage Change in Band Length
+lengthDiff = (bandLength - nz(bandLength[1])) / nz(bandLength[1]) * 100
+
+// Plot Oscillator
+oscillator = math.min(math.max(lengthDiff + 50, 1), 100)
+plot(oscillator, "Bollinger Band Length Oscillator", color=#4CAF50, linewidth=2)
+hline(50, "Middle Line", color=#9E9E9E, linestyle=hline.style_dashed)
